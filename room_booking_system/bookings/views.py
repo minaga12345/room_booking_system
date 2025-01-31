@@ -14,6 +14,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import api_view
 
 class BookingPagination(PageNumberPagination):
     page_size = 5  # Limit to 5 bookings per page
@@ -26,6 +27,12 @@ class BookingViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['status', 'user__username', 'room__name']  # Fields for filtering
     search_fields = ['user__username', 'room__name']  # Enable search functionality
+
+    @api_view(['GET'])
+    def admin_bookings(request):
+        bookings = Booking.objects.all().order_by('-start_time')  # Fetch all bookings sorted by start_time (descending)
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def my_bookings(self, request):

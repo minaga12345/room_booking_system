@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from .models import Booking
 from notifications.models import Notification
-
+from .serializers import BookingSerializer
+from django.http import JsonResponse
 
 class NotificationInline(admin.TabularInline):
     model = Notification
@@ -60,3 +61,11 @@ class BookingAdmin(admin.ModelAdmin):
                 self.message_user(request, f"Error canceling booking for {booking.room.name}: {e.message}", level="error")
 
     cancel_bookings.short_description = "Cancel selected bookings"
+
+def admin_bookings(request):
+    """
+    Handle admin bookings. This is a placeholder for demonstration.
+    """
+    bookings = Booking.objects.all()
+    serializer = BookingSerializer(bookings, many=True)
+    return JsonResponse(serializer.data, safe=False)

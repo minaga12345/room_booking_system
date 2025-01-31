@@ -9,6 +9,7 @@ class BookingSerializer(serializers.ModelSerializer):
     room = serializers.StringRelatedField(read_only=True)  # Display room name in responses
     user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)  # Accept user ID
     room_id = serializers.PrimaryKeyRelatedField(queryset=Room.objects.all(), write_only=True)  # Accept room ID
+    room_name = serializers.CharField(source='room.name', read_only=True)  # Explicitly add room name
 
     class Meta:
         model = Booking
